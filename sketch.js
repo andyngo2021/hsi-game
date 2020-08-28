@@ -1,20 +1,16 @@
-let screen_width = 1000, screen_height = 600;
+let s_width = 1000, s_height = 600;
+let philipImg;
+
+
 
 function setup() {
-  createCanvas(screen_width, screen_height);
+  createCanvas(s_width, s_height);
   background(0);
+  philipImg = loadImage('Game Files/Images/Backgrounds/philip_bg.png');
+  // Loading in Images
   
 }
 
 function draw() {
-  let pos = createVector(width/2,height/2);
-  let mouse = createVector(mouseX, mouseY);
-  let v = p5.Vector.sub(mouse,pos);
-  
-  translate(width/2, height/2);
-  
-  strokeWeight(4);
-  stroke(255, 50);
-  line(0,0, v.x, v.y);
-  
+	image(philipImg, 0, 0);
 }
