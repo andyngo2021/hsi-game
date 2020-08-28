@@ -11,24 +11,24 @@ screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 clock = pygame.time.Clock()
 cwd = os.getcwd()
-##music = pygame.mixer.music.load(cwd + '\\Game Files\\Sounds\\background_song.mp3')
-##hit = pygame.mixer.Sound(cwd + '\\Game Files\\Sounds\\170148__timgormly__8-bit-hurt1.aiff')
-##pickup = pygame.mixer.Sound(cwd + '\\Game Files\\Sounds\\347172__davidsraba__coin-pickup-sound.wav')
-##gameover_sound = pygame.mixer.Sound(cwd + '\\Game Files\\Sounds\\253886__themusicalnomad__negative-beeps.wav')
+music = pygame.mixer.music.load(cwd + '\\Game Files\\Sounds\\background_song.mp3')
+hit = pygame.mixer.Sound(cwd + '\\Game Files\\Sounds\\170148__timgormly__8-bit-hurt1.aiff')
+pickup = pygame.mixer.Sound(cwd + '\\Game Files\\Sounds\\347172__davidsraba__coin-pickup-sound.wav')
+gameover_sound = pygame.mixer.Sound(cwd + '\\Game Files\\Sounds\\253886__themusicalnomad__negative-beeps.wav')
 
 # Main Sound
-##pygame.mixer.music.set_volume(0.15)
-##hit.set_volume(0.30)
-##pickup.set_volume(0.30)
-##gameover_sound.set_volume(0.37)
+pygame.mixer.music.set_volume(0.15)
+hit.set_volume(0.30)
+pickup.set_volume(0.30)
+gameover_sound.set_volume(0.37)
 
 # Sound Settings
-#pygame.mixer.music.set_volume(0.50)
-#hit.set_volume(0.40)
-#pickup.set_volume(0.40)
-#gameover_sound.set_volume(1.0)
+pygame.mixer.music.set_volume(0.50)
+hit.set_volume(0.40)
+pickup.set_volume(0.40)
+gameover_sound.set_volume(1.0)
 
-##pygame.mixer.music.play(-1)
+pygame.mixer.music.play(-1)
 
 gameover = False
 chosen_char = False
@@ -217,7 +217,7 @@ def set_eric():
 def crash():
     global person
     person = None
-    # gameover_sound.play()
+    gameover_sound.play()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -356,7 +356,7 @@ def game():
 
             if character_y < obstacle_y[j] + obstacle_height-30:
                 if character_x <= obstacle_x[j] <= character_x + character_width or character_x <= obstacle_x[j] + obstacle_width <= character_x + character_width:
-                    # hit.play()
+                    hit.play()
                     if lives > 1:
                         obstacle_x[j] = random.randrange(0, screen_width)
                         obstacle_y[j] = -obstacle_height
@@ -372,7 +372,7 @@ def game():
 
         if character_y < catch_y+30:
             if character_x <= catch_x <= character_x + character_width or character_x <= catch_x + catch_width <= character_x + character_width:
-                # pickup.play()
+                pickup.play()
                 catch_x = random.randrange(0, screen_width-catch_width)
                 catch_y = -catch_height
                 score += 1
