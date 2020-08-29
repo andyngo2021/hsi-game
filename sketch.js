@@ -85,14 +85,12 @@ function setup() {
 
   characters = [philip, jessica, andrea, eric];
   index = 0;
-  lives = 3;
-  score = 0;
   person = characters[index];
+  resetGame();
   initializeObjects();
 
   
-  char_x = (s_width-person.char.width)/2;
-  char_y = s_height-person.char.height;
+
 
   
 }
@@ -120,6 +118,14 @@ function draw() {
 	else if (mode == 1) {
 		mainMenu();
 	}	
+}
+
+function resetGame() {
+	score = 0;
+	lives = 3;
+	char_x = (s_width-person.char.width)/2;
+  	char_y = s_height-person.char.height;
+  	initializeObjects();
 }
 
 
@@ -237,7 +243,8 @@ class FallingObject {
 					else {
 						lives -= 1;
 						console.log("You lost!");
-						mode = 1;
+						resetGame();
+						mode = 1; // Sends you back to start menu
 					}
 				}
 				else if (this.type == "catch") {
