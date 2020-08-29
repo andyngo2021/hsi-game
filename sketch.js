@@ -60,20 +60,28 @@ function preload() {
 
 let obj;
 let fallingObjects;
+let catch_obj;
+
+
+function initializeObjects() {
+	let numObjects = 3;
+  	fallingObjects = [];
+  	for (let k=0; k<numObjects; k++) {
+  		let x = random(s_width-(person.obstacle.width));
+  		let y = -person.obstacle.height;
+  		let speed = random(5,10);
+  		fallingObjects[k] = new FallingObject(x, y, speed, person.obstacle);
+  	}
+  	catch_obj = new FallingObject(random(s_width-(person.catch.width)), -random(person.catch.height+400), random(5,10), person.catch);
+}
+
 function setup() {
   createCanvas(s_width, s_height);
   //background(0);
   characters = [philip, jessica, andrea, eric];
   index = 0;
   person = characters[index];
-  let numObjects = 3;
-  fallingObjects = [];
-  for (let k=0; k<numObjects; k++) {
-  	let x = random(s_width-(person.obstacle.width));
-  	let y = -person.obstacle.height;
-  	let speed = random(6,9);
-  	fallingObjects[k] = new FallingObject(x, y, speed);
-  }
+  initializeObjects();
   // obj = new FallingObject(random(s_width-(person.obstacle.width)), -person.obstacle.height, 5);
   
   
@@ -84,12 +92,14 @@ function setup() {
 }
 
 function mouseClicked() {
+	
 	if (index < characters.length-1) {
 		index++;
 	} else {
 		index = 0;
 	}
 	person = characters[index];
+	initializeObjects();
 
 }
 
@@ -111,25 +121,29 @@ function draw() {
 		fallingObjects[i].move();
 		fallingObjects[i].show();
 	}
+	catch_obj.move();
+	catch_obj.show();
 
 }
 
 
 class FallingObject {
-	constructor(x, y, speed) {
+	constructor(x, y, speed, object_img) {
 		this.x = x;
 		this.y = y;
 		this.speed = speed;
+		this.object_img = object_img;
+
 	}
 	move() {
 		this.y += this.speed;
 		if (this.y > s_height) {
 			this.y = -person.obstacle.height;
 			this.x = random(s_width-person.obstacle.width);
-			this.speed = random(6,9);
+			this.speed = random(5,10);
 		}
 	}
 	show() {
-		image(person.obstacle, this.x, this.y);
+		image(this.object_img, this.x, this.y);
 	}
 }
