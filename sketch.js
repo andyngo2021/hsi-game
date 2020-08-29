@@ -67,7 +67,7 @@ let catch_obj;
 let lives, score;
 
 function initializeObjects() {
-	let numObjects = 2;
+	let numObjects = 4;
   	fallingObjects = [];
   	for (let k=0; k<numObjects; k++) {
   		let x = random(s_width-(person.obstacle.width));
@@ -108,17 +108,75 @@ function mouseClicked() {
 
 }
 
-function updateScore(score) {
+function crash() {
 
 }
 
-
+let mode = 1;
 function draw() {
+	if (mode == 0) {
+		game();
+	}
+	else if (mode == 1) {
+		mainMenu();
+	}	
+}
+
+
+// function customButton(inactive, active, x, y, action) {
+// 	let button_w = inactive.width;
+// 	let button_h = inactive.height;
+// 	if ((x < mouseX && mouseX < x + button_w) && (y < mouseY && mouseY < y + button_h)) {
+// 		image(active, x, y);
+// 		// check if click
+// 	}
+// 	else {
+// 		image(inactive, x, y);
+// 	}
+// }
+
+let startBtn;
+function mouseClicked() {
+	startBtn.clicked(mouseX, mouseY, "game");
+}
+
+class customButton {
+	constructor(inactive, active, x, y) {
+
+		this.inactive = inactive;
+		this.active = active;
+		this.x = x;
+		this.y = y;
+		let button_h = this.inactive.height;
+		let button_w = this.active.width;
+		if ((this.x < mouseX && mouseX < this.x + button_w) && (this.y < mouseY && mouseY < this.y + button_h)) {
+			image(this.active, this.x, this.y);
+			// check if click
+		}
+		else {
+			image(this.inactive, this.x, this.y);
+		}
+	}
+	clicked(mx, my, action) {
+		let button_h = this.inactive.height;
+		let button_w = this.active.width;
+		if ((this.x < mx && mx < this.x + button_w) && (this.y < my && my < this.y + button_h)) {
+			if (action == "game") {
+				mode = 0;
+			}
+		}
+	}
+}
+
+function mainMenu() {
+	image(main_menu_background, 0, 0);
+	startBtn = new customButton(buttons.main_start[0], buttons.main_start[1], 250, 220, game);
+}
+
+
+function game() {
 	image(person.background, 0, 0);
-
-
 	let char_speed = 15;
-
 	image(person.char, char_x, char_y);
 	if ((keyIsDown(LEFT_ARROW) || keyIsDown(65)) && char_x > 0) {
 		char_x -= char_speed;
@@ -179,6 +237,7 @@ class FallingObject {
 					else {
 						lives -= 1;
 						console.log("You lost!");
+						mode = 1;
 					}
 				}
 				else if (this.type == "catch") {
