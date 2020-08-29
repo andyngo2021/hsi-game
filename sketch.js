@@ -5,6 +5,9 @@ let char_x, char_y;
 
 let index, characters;
 function preload() {
+
+	custom_font = loadFont('Game Files/Fonts/fipps.otf');
+
 	small_icon = loadImage('Game Files/Images/Etc/small_icon.png');
 	heart_img = loadImage('Game Files/Images/Etc/heart.png');
 	game_over_text = loadImage('Game Files/Images/Etc/gameover.png');
@@ -77,6 +80,9 @@ function initializeObjects() {
 
 function setup() {
   createCanvas(s_width, s_height);
+  textFont(custom_font);
+  textSize(40);
+
   characters = [philip, jessica, andrea, eric];
   index = 0;
   lives = 3;
@@ -102,10 +108,14 @@ function mouseClicked() {
 
 }
 
+function updateScore(score) {
+
+}
 
 
 function draw() {
 	image(person.background, 0, 0);
+
 
 	let char_speed = 15;
 
@@ -125,7 +135,17 @@ function draw() {
 	catch_obj.move();
 	catch_obj.show();
 
+	draw_hearts();
+	text(score, s_width/2, 90);
 
+}
+
+function draw_hearts() {
+	let tmp = 55;
+	for (let i=0; i<lives; i++) {
+		image(heart_img, s_width-tmp, 5);
+		tmp += 55;
+	}
 }
 
 
@@ -151,11 +171,13 @@ class FallingObject {
 			if (char_x <= this.x && this.x <= char_x + person.char.width || char_x <= this.x + this.object_img.width && this.x + this.object_img.width <= char_x + person.char.width) {
 				console.log("collison!");
 				if (this.type == "obstacle") {
+
 					if (lives > 1) {
 						lives -= 1;
 						console.log("Current amount of lives " + lives);
 					}
 					else {
+						lives -= 1;
 						console.log("You lost!");
 					}
 				}
