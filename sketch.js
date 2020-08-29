@@ -4,9 +4,15 @@ let small_icon, heart_img, game_over_text, main_background, main_menu_background
 let char_x, char_y;
 
 let startBtn, xBtn, htpBtn;
-
+let bg_song;
 let index, characters;
 function preload() {
+	
+	bg_song = loadSound("Game Files/Sounds/background_song.mp3");
+	hit_sound = loadSound("Game Files/Sounds/270326__littlerobotsoundfactory__hit-01.wav");
+	pickup_sound = loadSound("Game Files/Sounds/347172__davidsraba__coin-pickup-sound.wav");
+	gameover_sound = loadSound("Game Files/Sounds/253886__themusicalnomad__negative-beeps.wav")
+
 
 	custom_font = loadFont('Game Files/Fonts/fipps.otf');
 
@@ -82,19 +88,26 @@ function initializeObjects() {
   	}
   	catch_obj = new FallingObject(random(s_width-(person.catch.width)), -random(person.catch.height+200), random(5,10), person.catch, "catch");
 }
-
+let song_play;
 function setup() {
-  createCanvas(s_width, s_height);
-  textFont(custom_font);
-  textSize(40);
-  chosen_char = false;
-  person = null;
+	
 
+  	createCanvas(s_width, s_height);
+  	textFont(custom_font);
+  	textSize(40);
+  	chosen_char = false;
+  	person = null;
+  	bg_song.setVolume(0.10);
+  	song_play = false;
+  	gameover_sound.setVolume(0.40);
+  	pickup_sound.setVolume(0.18);
+  	hit_sound.setVolume(0.15);
   
 }
 
 let mode = 1;
 function draw() {
+
 	if (mode == 0) {
 		game();
 	}
@@ -154,6 +167,12 @@ function aboutPage() {
 
 let playAgainBtn, mainMenuBtn;
 function mouseClicked() {
+	if (song_play == false && mouseX > 0 && mouseX < s_width && mouseY > 0 && mouseY < s_height) {
+		console.log(mouseX);
+		song_play = true;
+		bg_song.loop();
+		
+	}
 	if (mode == 1) {
 		aboutBtn.clicked(mouseX, mouseY, "about");
 		startBtn.clicked(mouseX, mouseY, "charSelect");
@@ -219,8 +238,9 @@ class customButton {
 				mode = 2;
 			}
 			else if (action == "mainMenu") {
+
 				reset_char_select();
-				setTimeout(draw(), 100);
+				// setTimeout(draw(), 100);
 				mode = 1;
 			}
 			else if (action == "about") {
@@ -333,18 +353,20 @@ class FallingObject {
 		if (char_y < this.y+30) {
 			if (char_x <= this.x && this.x <= char_x + person.char.width || char_x <= this.x + this.object_img.width && this.x + this.object_img.width <= char_x + person.char.width) {
 				if (this.type == "obstacle") {
-
+					hit_sound.play();
 					if (lives > 1) {
 						lives -= 1;
 					}
 					else {
 						lives -= 1;
 						gameover = true;
+						gameover_sound.play();
 						mode = 4;
 					}
 				}
 				else if (this.type == "catch") {
 					score++; 
+					pickup_sound.play();
 				}
 				this.reinit();
 			}
