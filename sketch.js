@@ -64,7 +64,7 @@ let catch_obj;
 
 
 function initializeObjects() {
-	let numObjects = 3;
+	let numObjects = 2;
   	fallingObjects = [];
   	for (let k=0; k<numObjects; k++) {
   		let x = random(s_width-(person.obstacle.width));
@@ -77,22 +77,19 @@ function initializeObjects() {
 
 function setup() {
   createCanvas(s_width, s_height);
-  //background(0);
   characters = [philip, jessica, andrea, eric];
   index = 0;
   person = characters[index];
   initializeObjects();
-  // obj = new FallingObject(random(s_width-(person.obstacle.width)), -person.obstacle.height, 5);
-  
+
   
   char_x = (s_width-person.char.width)/2;
   char_y = s_height-person.char.height;
-  // Loading in Images
+
   
 }
 
 function mouseClicked() {
-	
 	if (index < characters.length-1) {
 		index++;
 	} else {
@@ -121,26 +118,47 @@ function draw() {
 		fallingObjects[i].move();
 		fallingObjects[i].show();
 	}
+
+
+
+
 	catch_obj.move();
 	catch_obj.show();
+
 
 }
 
 
 class FallingObject {
-	constructor(x, y, speed, object_img) {
+	constructor(x, y, speed, object_img, type) {
 		this.x = x;
 		this.y = y;
 		this.speed = speed;
 		this.object_img = object_img;
-
+		this.type = type;
+	}
+	reinit() {
+		this.y = -this.object_img.height;
+		this.x = random(s_width-this.object_img.width);
+		this.speed = random(5,10);
 	}
 	move() {
 		this.y += this.speed;
 		if (this.y > s_height) {
-			this.y = -person.obstacle.height;
-			this.x = random(s_width-person.obstacle.width);
-			this.speed = random(5,10);
+			this.reinit();
+		}
+		if (char_y < this.y+30) {
+			if (char_x <= this.x && this.x <= char_x + person.char.width || char_x <= this.x + this.object_img.width && this.x + this.object_img.width <= char_x + person.char.width) {
+				console.log("collison!");
+				if (this.type == "obstacle") {
+					// obstacle stuff happens
+					// lose a life, check if game is over
+				}
+				else if (this.type == "catch") {
+					// gain a point
+				}
+				this.reinit();
+			}
 		}
 	}
 	show() {
