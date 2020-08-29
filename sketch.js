@@ -3,6 +3,8 @@ let person, philip, jessica, andrea, eric, buttons;
 let small_icon, heart_img, game_over_text, main_background, main_menu_background, htp_background, about_bg, golden_border;
 let char_x, char_y;
 
+let startBtn, xBtn, htpBtn;
+
 let index, characters;
 function preload() {
 
@@ -52,11 +54,11 @@ function preload() {
 		play_again: [loadImage('Game Files/Buttons/play_again_inactive.png'), loadImage('Game Files/Buttons/play_again_active.png')],
 		quit: [loadImage('Game Files/Buttons/quit_inactive.png'), loadImage('Game Files/Buttons/quit_active.png')],
 		menu: [loadImage('Game Files/Buttons/menu_inactive.png'), loadImage('Game Files/Buttons/menu_active.png')],
-		start: [loadImage('Game Files/Buttons/start_inactive.png'), loadImage('Game Files/Buttons/start_active.png')],
+		start: [loadImage('Game Files/Buttons/start_inactive.png'), loadImage('Game Files/Buttons/start_active.png'), loadImage('Game Files/Buttons/start_disabled.png')],
 		main_start: [loadImage('Game Files/Buttons/main_start_inactive.png'), loadImage('Game Files/Buttons/main_start_active.png')],
 		htp: [loadImage('Game Files/Buttons/htp_inactive.png'), loadImage('Game Files/Buttons/htp_active.png')],
 		about: [loadImage('Game Files/Buttons/about_inactive.png'), loadImage('Game Files/Buttons/about_active.png')],
-		back: [loadImage('Game Files/Buttons/about_inactive.png'), loadImage('Game Files/Buttons/about_active.png')]
+		back: [loadImage('Game Files/Buttons/cancel_inactive.png'), loadImage('Game Files/Buttons/cancel_active.png')]
 	};
 
 }
@@ -65,7 +67,10 @@ let obj;
 let fallingObjects;
 let catch_obj;
 let lives, score;
-
+let gameover;
+let border_coords;
+let chosen_char;
+let pick_eric, pick_jessica, pick_andrea, pick_philip;
 function initializeObjects() {
 	let numObjects = 4;
   	fallingObjects = [];
@@ -75,39 +80,17 @@ function initializeObjects() {
   		let speed = random(5,10);
   		fallingObjects[k] = new FallingObject(x, y, speed, person.obstacle, "obstacle");
   	}
-  	catch_obj = new FallingObject(random(s_width-(person.catch.width)), -random(person.catch.height+400), random(5,10), person.catch, "catch");
+  	catch_obj = new FallingObject(random(s_width-(person.catch.width)), -random(person.catch.height+200), random(5,10), person.catch, "catch");
 }
 
 function setup() {
   createCanvas(s_width, s_height);
   textFont(custom_font);
   textSize(40);
-
-  characters = [philip, jessica, andrea, eric];
-  index = 0;
-  person = characters[index];
-  resetGame();
-  initializeObjects();
+  chosen_char = false;
+  person = null;
 
   
-
-
-  
-}
-
-function mouseClicked() {
-	if (index < characters.length-1) {
-		index++;
-	} else {
-		index = 0;
-	}
-	person = characters[index];
-	initializeObjects();
-
-}
-
-function crash() {
-
 }
 
 let mode = 1;
@@ -117,33 +100,91 @@ function draw() {
 	}
 	else if (mode == 1) {
 		mainMenu();
-	}	
+	}
+	else if (mode == 2) {
+		htpPage();
+	}
+	else if (mode == 3) {
+		aboutPage();
+	}
+	else if (mode == 4) {
+		crash();
+	}
+	else if (mode == 5) {
+		charSelect();
+	}
 }
 
 function resetGame() {
 	score = 0;
 	lives = 3;
+	gameover = false;
 	char_x = (s_width-person.char.width)/2;
   	char_y = s_height-person.char.height;
   	initializeObjects();
 }
 
+let startGameBtn;
+function charSelect() {
+	image(main_background, 0, 0);
+	pick_eric = new customButton(eric.inactive, eric.active, 20, 100);
+	pick_jessica = new customButton(jessica.inactive, jessica.active, 265, 100);
+	pick_andrea = new customButton(andrea.inactive, andrea.active, 510, 100);
+	pick_philip = new customButton(philip.inactive, philip.active, 755, 100);
 
-// function customButton(inactive, active, x, y, action) {
-// 	let button_w = inactive.width;
-// 	let button_h = inactive.height;
-// 	if ((x < mouseX && mouseX < x + button_w) && (y < mouseY && mouseY < y + button_h)) {
-// 		image(active, x, y);
-// 		// check if click
-// 	}
-// 	else {
-// 		image(inactive, x, y);
-// 	}
-// }
+	if (chosen_char == true) {
+		startGameBtn = new customButton(buttons.start[0], buttons.start[1], 377, 510);
+	}
+	else {
+		startDisabled = new customButton(buttons.start[2], buttons.start[2], 377, 510);
+	}
+}
 
-let startBtn;
+
+function htpPage() {
+	image(htp_background, 0, 0,);
+	xBtn = new customButton(buttons.back[0], buttons.back[1], 20, 20);
+}
+
+function aboutPage() {
+	image(about_bg, 0, 0);
+	xBtn = new customButton(buttons.back[0], buttons.back[1], 20, 20);
+}
+
+
+let playAgainBtn, mainMenuBtn;
 function mouseClicked() {
-	startBtn.clicked(mouseX, mouseY, "game");
+	if (mode == 1) {
+		aboutBtn.clicked(mouseX, mouseY, "about");
+		startBtn.clicked(mouseX, mouseY, "charSelect");
+		htpBtn.clicked(mouseX, mouseY, "htp");
+	}
+	if (mode == 3 || mode == 2) {
+		xBtn.clicked(mouseX, mouseY, "mainMenu");
+	}
+	if (mode == 4) {
+		playAgainBtn.clicked(mouseX, mouseY, "reset");
+		mainMenuBtn.clicked(mouseX, mouseY, "mainMenu");
+	}
+	if (mode == 5) {
+		pick_eric.clicked(mouseX, mouseY, "eric");
+		pick_jessica.clicked(mouseX, mouseY, "jessica");
+		pick_andrea.clicked(mouseX, mouseY, "andrea");
+		pick_philip.clicked(mouseX, mouseY, "philip");
+		if (chosen_char == true) {
+			startGameBtn.clicked(mouseX, mouseY, "play");
+		}
+	}
+}
+
+function reset_char_select() {
+	person = null;
+	chosen_char = false;
+}
+
+function set_char(character) {
+	person = character;
+	chosen_char = true;
 }
 
 class customButton {
@@ -157,17 +198,66 @@ class customButton {
 		let button_w = this.active.width;
 		if ((this.x < mouseX && mouseX < this.x + button_w) && (this.y < mouseY && mouseY < this.y + button_h)) {
 			image(this.active, this.x, this.y);
-			// check if click
 		}
 		else {
 			image(this.inactive, this.x, this.y);
+		}
+		if (person != null && mode == 5) {
+			image(golden_border, border_coords[0], border_coords[1]);
 		}
 	}
 	clicked(mx, my, action) {
 		let button_h = this.inactive.height;
 		let button_w = this.active.width;
 		if ((this.x < mx && mx < this.x + button_w) && (this.y < my && my < this.y + button_h)) {
-			if (action == "game") {
+			if (action == "game" && mode == 1) {
+				resetGame();
+				initializeObjects();
+				mode = 0;
+			}
+			else if (action == "htp" && mode == 1) {
+				mode = 2;
+			}
+			else if (action == "mainMenu") {
+				reset_char_select();
+				setTimeout(draw(), 100);
+				mode = 1;
+			}
+			else if (action == "about") {
+				mode = 3;
+
+			}
+			else if (action == "gameover") {
+				mode = 4;
+			}
+			else if (action == "reset" && mode == 4) {
+				resetGame();
+				initializeObjects();
+				mode = 0;
+			}
+			else if (action == "charSelect") {
+				// delay
+				mode = 5;
+			}
+			else if (action == "eric" && mode == 5) {
+				set_char(eric);
+				border_coords = [20, 100];
+			}
+			else if (action == "jessica") {
+				set_char(jessica);
+				border_coords = [265, 100];
+			}
+			else if (action == "andrea") {
+				set_char(andrea);
+				border_coords = [510, 100];
+			}
+			else if (action == "philip") {
+				set_char(philip);
+				border_coords = [755, 100];
+			}
+			else if (action == "play" && mode == 5) {
+				resetGame();
+				initializeObjects();
 				mode = 0;
 			}
 		}
@@ -176,32 +266,41 @@ class customButton {
 
 function mainMenu() {
 	image(main_menu_background, 0, 0);
-	startBtn = new customButton(buttons.main_start[0], buttons.main_start[1], 250, 220, game);
+	startBtn = new customButton(buttons.main_start[0], buttons.main_start[1], 250, 220);
+	htpBtn = new customButton(buttons.htp[0], buttons.htp[1], 250, 320);
+	aboutBtn = new customButton(buttons.about[0], buttons.about[1], 250, 420);
 }
 
+function crash() {
+	image(game_over_text, 0, 100);
+	playAgainBtn = new customButton(buttons.play_again[0], buttons.play_again[1], 330, 280);
+	mainMenuBtn = new customButton(buttons.menu[0], buttons.menu[1], 330, 380);
+
+}
 
 function game() {
-	image(person.background, 0, 0);
-	let char_speed = 15;
-	image(person.char, char_x, char_y);
-	if ((keyIsDown(LEFT_ARROW) || keyIsDown(65)) && char_x > 0) {
-		char_x -= char_speed;
+	if (gameover == false) {
+		image(person.background, 0, 0);
+		let char_speed = 15;
+		image(person.char, char_x, char_y);
+		if ((keyIsDown(LEFT_ARROW) || keyIsDown(65)) && char_x > 0) {
+			char_x -= char_speed;
+		}
+		if ((keyIsDown(RIGHT_ARROW) || keyIsDown(68)) && (char_x+person.char.width) < s_width) {
+			char_x += char_speed;
+		}
+
+		for (let i=0; i<fallingObjects.length; i++) {
+			fallingObjects[i].move();
+			fallingObjects[i].show();
+		}
+
+		catch_obj.move();
+		catch_obj.show();
+
+		draw_hearts();
+		text(score, s_width/2, 90);
 	}
-	if ((keyIsDown(RIGHT_ARROW) || keyIsDown(68)) && (char_x+person.char.width) < s_width) {
-		char_x += char_speed;
-	}
-
-	for (let i=0; i<fallingObjects.length; i++) {
-		fallingObjects[i].move();
-		fallingObjects[i].show();
-	}
-
-	catch_obj.move();
-	catch_obj.show();
-
-	draw_hearts();
-	text(score, s_width/2, 90);
-
 }
 
 function draw_hearts() {
@@ -233,23 +332,19 @@ class FallingObject {
 		}
 		if (char_y < this.y+30) {
 			if (char_x <= this.x && this.x <= char_x + person.char.width || char_x <= this.x + this.object_img.width && this.x + this.object_img.width <= char_x + person.char.width) {
-				console.log("collison!");
 				if (this.type == "obstacle") {
 
 					if (lives > 1) {
 						lives -= 1;
-						console.log("Current amount of lives " + lives);
 					}
 					else {
 						lives -= 1;
-						console.log("You lost!");
-						resetGame();
-						mode = 1; // Sends you back to start menu
+						gameover = true;
+						mode = 4;
 					}
 				}
 				else if (this.type == "catch") {
 					score++; 
-					console.log("Score: " + score);
 				}
 				this.reinit();
 			}
