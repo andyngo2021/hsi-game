@@ -3,16 +3,14 @@ import random
 import time
 import os
 
-# Download Python and run this file to hear game noises. Exe doesn't let the sound files work apparently
-
 pygame.init()
 screen_width = 1000
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 clock = pygame.time.Clock()
 cwd = os.getcwd()
-music = pygame.mixer.music.load(cwd + '\\Game Files\\Sounds\\background_song.mp3')
-hit = pygame.mixer.Sound(cwd + '\\Game Files\\Sounds\\170148__timgormly__8-bit-hurt1.aiff')
+music = pygame.mixer.music.load(cwd + '\\Game Files\\Sounds\\background_song.mp3') 
+hit = pygame.mixer.Sound(cwd + '\\Game Files\\Sounds\\270326__littlerobotsoundfactory__hit-01.wav')
 pickup = pygame.mixer.Sound(cwd + '\\Game Files\\Sounds\\347172__davidsraba__coin-pickup-sound.wav')
 gameover_sound = pygame.mixer.Sound(cwd + '\\Game Files\\Sounds\\253886__themusicalnomad__negative-beeps.wav')
 
